@@ -1,6 +1,6 @@
-import componentes.SmartCar;
+import componentes.SmartCar.SmartCar;
 
-public class SmartCarStarterApp {
+public class StarterApp {
     public static void main(String[] args) throws Exception {
 
 		if ( args.length < 2 )
@@ -20,6 +20,8 @@ public class SmartCarStarterApp {
 		} catch (InterruptedException e) {
 		}
 
+		// Configura el vehículo para que inicie en un punto específico del PTPaterna
+		sc1.getIntoRoad("R1s2a", 300);
 		//sc1.notifyIncident(...);
     }
 }

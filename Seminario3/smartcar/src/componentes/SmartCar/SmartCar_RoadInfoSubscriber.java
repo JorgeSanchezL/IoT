@@ -1,10 +1,10 @@
-package componentes;
+package componentes.SmartCar;
 
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import utils.MySimpleLogger;
 
-public class SmartCar_RoadInfoSubscriber extends MyMqttClient {
+public class SmartCar_RoadInfoSubscriber extends SmartCar_MqttClient {
 
 	protected SmartCar theSmartCar;
 	

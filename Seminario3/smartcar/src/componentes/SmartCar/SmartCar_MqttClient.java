@@ -1,4 +1,4 @@
-package componentes;
+package componentes.SmartCar;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -10,7 +10,7 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
 import utils.MySimpleLogger;
 
-public abstract class MyMqttClient implements MqttCallback {
+public abstract class SmartCar_MqttClient implements MqttCallback {
 
 	protected MqttClient myClient;
 	protected String clientId = null;
@@ -19,7 +19,7 @@ public abstract class MyMqttClient implements MqttCallback {
 	protected SmartCar smartcar = null;
 
 	
-	public MyMqttClient(String clientId, SmartCar smartcar, String MQTTBrokerURL) {
+	public SmartCar_MqttClient(String clientId, SmartCar smartcar, String MQTTBrokerURL) {
 		this.clientId = clientId;
 		this.smartcar = smartcar;
 		this.brokerURL = MQTTBrokerURL;
