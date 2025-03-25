@@ -1,0 +1,20 @@
+{
+    "java.project.sourcePaths": [
+        "dispositivo-pi4jv2\\src",
+        "dispositivo\\src"
+    ],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "c:\\Users\\jorge\\Desktop\\IoT\\seminari-2-vscode-alumno\\seminari-2-vscode-alumno\\dispositivo-pi4jv2\\lib\\pi4j-core-javadoc.jar",
+        "c:\\Users\\jorge\\Desktop\\IoT\\seminari-2-vscode-alumno\\seminari-2-vscode-alumno\\dispositivo-pi4jv2\\lib\\pi4j-library-pigpio.jar",
+        "c:\\Users\\jorge\\Desktop\\IoT\\seminari-2-vscode-alumno\\seminari-2-vscode-alumno\\dispositivo-pi4jv2\\lib\\pi4j-plugin-raspberrypi.jar",
+        "c:\\Users\\jorge\\Desktop\\IoT\\seminari-2-vscode-alumno\\seminari-2-vscode-alumno\\lib\\org.restlet-3.0-M1.jar",
+        "c:\\Users\\jorge\\Desktop\\IoT\\seminari-2-vscode-alumno\\seminari-2-vscode-alumno\\dispositivo-pi4jv2\\lib\\slf4j-api.jar",
+        "c:\\Users\\jorge\\Desktop\\IoT\\seminari-2-vscode-alumno\\seminari-2-vscode-alumno\\lib\\java-json.jar",
+        "c:\\Users\\jorge\\Desktop\\IoT\\seminari-2-vscode-alumno\\seminari-2-vscode-alumno\\lib\\org.eclipse.paho.client.mqttv3-1.2.5.jar",
+        "c:\\Users\\jorge\\Desktop\\IoT\\seminari-2-vscode-alumno\\seminari-2-vscode-alumno\\dispositivo-pi4jv2\\lib\\pi4j-plugin-pigpio.jar",
+        "c:\\Users\\jorge\\Desktop\\IoT\\seminari-2-vscode-alumno\\seminari-2-vscode-alumno\\dispositivo-pi4jv2\\lib\\pi4j-core.jar",
+        "c:\\Users\\jorge\\Desktop\\IoT\\seminari-2-vscode-alumno\\seminari-2-vscode-alumno\\dispositivo-pi4jv2\\lib\\slf4j-simple.jar"
+    ],
+    "java.dependency.packagePresentation": "hierarchical"
+}
