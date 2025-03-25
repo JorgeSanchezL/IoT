@@ -6,7 +6,9 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.json.JSONObject;
@@ -64,12 +66,10 @@ public class Funcion_APIMQTT implements MqttCallback {
 		System.out.println("| Message: " + payload);
 		System.out.println("-------------------------------------------------");
 		
-		// DO SOME MAGIC HERE!
-		
 		//
 		// Obtenemos el id de la función
 		//   Los topics están organizados de la siguiente manera:
-		//         $topic_base/dispositivo/funcion/$ID-FUNCION/commamnd
+		//         $topic_base/dispositivo/funcion/$ID-FUNCION/subtopic
 		//   Donde el $topic_base es parametrizable al arrancar el dispositivo
 		//   y la $ID-FUNCION es el identificador de la dunción
 		
@@ -82,12 +82,21 @@ public class Funcion_APIMQTT implements MqttCallback {
 			return;
 		}
 		
+		// 5.10 - En caso de recibir un mensaje en el topic de copiar estados, obtenemos el estado y lo copiamos.
+		if topicNiveles[topicNiveles.length-1].equalsIgnoreCase("copiar") {
+			JSONObject json = null;
+			try {
+				json = new JSONObject(payload);
+			} catch (Exception e) {
+				MySimpleLogger.warn(this.loggerId, "Error al parsear JSON: " + e.getMessage());
+				return;
+			}
+			f.setStatus(json.getString("estado"));
+			this.publishStatus(f.getId(), json);
+			return;
+		}
 		
-		//
-		// Definimos una API con mensajes de acciones básicos
-		//
-
-		// Ejecutamos acción indicada en campo 'accion' del JSON recibido
+		// 5.8 - En caso de que el mensaje no sea para copiar estados, parseamos el JSON para obtener la acción a realizar
 		String action = "";
 		try {
 			JSONObject json = null;
@@ -203,6 +212,7 @@ public class Funcion_APIMQTT implements MqttCallback {
 		
 		for(IFuncion f : this.dispositivo.getFunciones())
 			this.subscribe(this.calculateCommandTopic(f));
+			this.subscribe(this.calculateCopiarTopic(f));
 
 	}
 	
@@ -214,10 +224,35 @@ public class Funcion_APIMQTT implements MqttCallback {
 		// To-Do
 		
 	}
+
+	// 5.9 - Método para publicar un mensaje con el estado de la función. Se llama cada vez que cambiamos el estado de la función
+	public void publishStatus(String funcion, JSONObject json) {
+		MqttTopic topic = myClient.getTopic(Configuracion.TOPIC_BASE + "dispositivo/" + dispositivo.getId() + "/funcion/" + funcion + "/info");
+		MqttMessage message = new MqttMessage(json.toString().getBytes());
+		message.setQos(0);
+		message.setRetained(true);
+
+		// Publish the message
+    	MqttDeliveryToken token = null;
+    	try {
+    		// publish message to broker
+			token = topic.publish(message);
+			MySimpleLogger.debug(this.loggerId, message.toString());
+	    	// Wait until the message has been delivered to the broker
+			token.waitForCompletion();
+			Thread.sleep(100);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	protected String calculateCommandTopic(IFuncion f) {
 		return Configuracion.TOPIC_BASE + "dispositivo/" + dispositivo.getId() + "/funcion/" + f.getId() + "/comandos";
+	}
+
+	protected String calculateCopiarTopic(IFuncion f) {
+		return Configuracion.TOPIC_BASE + "dispositivo/" + dispositivo.getId() + "/funcion/" + f.getId() + "/copiar";
 	}
 	
 	protected String calculateInfoTopic(IFuncion f) {

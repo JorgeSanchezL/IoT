@@ -1,9 +1,9 @@
 package dispositivo.componentes;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import dispositivo.api.mqtt.Funcion_APIMQTT;
 import dispositivo.interfaces.FuncionStatus;
 import dispositivo.interfaces.IFuncion;
 import dispositivo.utils.MySimpleLogger;
@@ -11,24 +11,29 @@ import dispositivo.utils.MySimpleLogger;
 public class Funcion implements IFuncion {
 	
 	protected String id = null;
+	protected Dispositivo dispositivo = null;
 
 	protected FuncionStatus initialStatus = null;
 	protected FuncionStatus status = null;
 	
+	protected Funcion_APIMQTT funcionMQTT = null;
+
 	private String loggerId = null;
+
 	
-	public static Funcion build(String id) {
-		return new Funcion(id, FuncionStatus.OFF);
+	public static Funcion build(String id, Dispositivo dispositivo, String mqttBrokerURL) {
+		return new Funcion(id, FuncionStatus.OFF, dispositivo, mqttBrokerURL);
 	}
 	
-	public static Funcion build(String id, FuncionStatus initialStatus) {
-		return new Funcion(id, initialStatus);
+	public static Funcion build(String id, FuncionStatus initialStatus, Dispositivo dispositivo, String mqttBrokerURL) {
+		return new Funcion(id, initialStatus, dispositivo, mqttBrokerURL);
 	}
 
-	protected Funcion(String id, FuncionStatus initialStatus) {
+	protected Funcion(String id, FuncionStatus initialStatus, Dispositivo dispositivo, String mqttBrokerURL) {
 		this.id = id;
 		this.initialStatus = initialStatus;
 		this.loggerId = "Funcion " + id;
+		this.funcionMQTT = Funcion_APIMQTT.build(dispositivo, mqttBrokerURL);
 	}
 		
 	@Override
@@ -41,6 +46,7 @@ public class Funcion implements IFuncion {
 
 		MySimpleLogger.info(this.loggerId, "==> Encender");
 		this.setStatus(FuncionStatus.ON);
+		this.publishStatus();
 		return this;
 	}
 
@@ -49,6 +55,7 @@ public class Funcion implements IFuncion {
 
 		MySimpleLogger.info(this.loggerId, "==> Apagar");
 		this.setStatus(FuncionStatus.OFF);
+		this.publishStatus();
 		return this;
 	}
 
@@ -57,6 +64,7 @@ public class Funcion implements IFuncion {
 
 		MySimpleLogger.info(this.loggerId, "==> Parpadear");
 		this.setStatus(FuncionStatus.BLINK);
+		this.publishStatus();
 		return this;
 	}
 	
@@ -100,24 +108,16 @@ public class Funcion implements IFuncion {
 	public IFuncion detener() {
 		return this;
 	}
-	
-	private void connect() {
-				try {
-			MqttDefaultFilePersistence persistence = null;
-			try {
-				persistence = new MqttDefaultFilePersistence("/tmp");
-			} catch (Exception e) {
-			}
-			if ( persistence != null )
-				myClient = new MqttClient(this.mqttBroker, clientID, persistence);
-			else
-				myClient = new MqttClient(this.mqttBroker, clientID);
 
-			myClient.setCallback(this);
-			myClient.connect(connOpt);
-		} catch (MqttException e) {
-			e.printStackTrace();
-			System.exit(-1);
+	// 5.9 - Método para publicar un mensaje con el estado de la función. Se llama cada vez que cambiamos el estado de la función
+	private void publishStatus() {
+		JSONObject pubMsg = new JSONObject();
+		try {
+			pubMsg.put("accion", this.getStatus().name());
+	   		} catch (JSONException e1) {
+			e1.printStackTrace();
 		}
+
+		funcionMQTT.publishStatus(this.getId(), pubMsg);
 	}
 }
