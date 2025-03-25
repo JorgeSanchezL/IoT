@@ -63,6 +63,7 @@ public class SmartCar {
 
 	// Método para iniciar la marcha del vehículo y notificar su entrada en el segmento actual
 	// hace lo mismo que setCurrentRoadPlace pero con diferentes argumentos
+	// 5.1 - Configura el vehículo para que ... reporte su ubicación.
 	public void getIntoRoad(String road, int km) {
 		RoadPlace new_rp = new RoadPlace(road, km);
 		this.setCurrentRoadPlace(new_rp);
@@ -84,8 +85,6 @@ public class SmartCar {
 		}
 	}
 
-	
-
 	public RoadPlace getCurrentPlace() {
 		return rp;
 	}
@@ -99,7 +98,6 @@ public class SmartCar {
 			return;
 		
 		this.notifier.alert(this.getSmartCarID(), incidentType, this.getCurrentPlace());
-		
 	}
 
 }

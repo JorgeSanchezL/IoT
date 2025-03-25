@@ -1,11 +1,6 @@
 package componentes.SmartCar;
 
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.json.JSONException;
@@ -20,24 +15,28 @@ public class SmartCar_InicidentNotifier extends SmartCar_MqttClient {
 		super(clientId, smartcar, brokerURL);
 	}
 	
-	
+	// 5.5 - Publica en alerts un evento de tráfico 
 	public void alert(String smartCarID, String notificationType, RoadPlace place) {
 
 		String myTopic =  "es/upv/pros/tatami/smartcities/traffic/PTPaterna/road/" + place.getRoad() + "/alerts";
 
 		MqttTopic topic = myClient.getTopic(myTopic);
 
-
-		// publish incident 'basic'
-		// TIP: habrá que adaptar este mensaje si queremos conectarlo al servicio de tráfico SmartTraffic PTPaterna,
-		//      para que siga la estructura allí propuesta (ver documento Seminario 3)
+		String incidentID = java.util.UUID.randomUUID().toString();
+		
 		JSONObject pubMsg = new JSONObject();
 		try {
-			pubMsg.put("vehicle", smartCarID);
-			pubMsg.put("event", notificationType);
-			pubMsg.put("road", place.getRoad());
-			pubMsg.put("kp", place.getKm());
-	   		} catch (JSONException e1) {
+			pubMsg.put("rt", "traffic::alert");
+			pubMsg.put("incident-type", notificationType);
+			pubMsg.put("id", incidentID);
+			pubMsg.put("road", place.getRoad().substring(0,2));
+			pubMsg.put("road-segment", place.getRoad());
+			pubMsg.put("starting-position", place.getKm());
+			pubMsg.put("ending-position", place.getKm());
+			pubMsg.put("description", "Vehicle Crash");
+			pubMsg.put("status", "Active");
+			pubMsg.put("link", "/incident/" + incidentID);
+			} catch (JSONException e1) {
 			// Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -60,7 +59,6 @@ public class SmartCar_InicidentNotifier extends SmartCar_MqttClient {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	    		    	
 
 	}
 

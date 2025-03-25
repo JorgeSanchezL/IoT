@@ -1,11 +1,5 @@
 package componentes.SpeedLimit;
-
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.json.JSONException;
@@ -21,7 +15,7 @@ public class SpeedLimit_Notifier extends SpeedLimit_MqttClient {
     }
 
     // Publica en signals el limite de velocidad
-    public void alert(String smartCarID, RoadPlace place) {
+    public void alert(String signalID, RoadPlace place) {
 
         String myTopic =  "es/upv/pros/tatami/smartcities/traffic/PTPaterna/road/" + place.getRoad() + "/signals";
 
@@ -30,9 +24,9 @@ public class SpeedLimit_Notifier extends SpeedLimit_MqttClient {
         JSONObject pubMsg = new JSONObject();
         try {
             pubMsg.put("rt", "traffic-signal");
-            pubMsg.put("id", "TL_at" + place.getRoad() + "S" + place.getKm() + "_" + smartCarID);
-            pubMsg.put("road", place.getRoad());
-            pubMsg.put("road-segment", place.getRoad() + "S" + place.getKm());
+            pubMsg.put("id", signalID);
+            pubMsg.put("road", place.getRoad().substring(0,2));
+            pubMsg.put("road-segment", place.getRoad());
             pubMsg.put("signal-type", "SPEED_LIMIT");
             pubMsg.put("starting-position", place.getKm());
             pubMsg.put("ending-position", place.getKm());

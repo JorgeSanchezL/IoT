@@ -1,4 +1,6 @@
+import componentes.RoadPlace;
 import componentes.SmartCar.SmartCar;
+import componentes.SpeedLimit.SpeedLimit;
 
 public class StarterApp {
     public static void main(String[] args) throws Exception {
@@ -13,15 +15,21 @@ public class StarterApp {
 		String brokerURL = args[1];
 
         SmartCar sc1 = new SmartCar(smartCarID, brokerURL);
-		sc1.getIntoRoad("R1s2a", 0);
+		SpeedLimit sp1 = new SpeedLimit(new RoadPlace("R1s2a", 300), 100, "sp1", brokerURL);
 		
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 		}
 
-		// Configura el vehículo para que inicie en un punto específico del PTPaterna
+		// 5.1 - Configura el vehículo para que inicie en un punto específico del PTPaterna
 		sc1.getIntoRoad("R1s2a", 300);
-		//sc1.notifyIncident(...);
+
+		// 5.3 - Ubica dicha señal en un tramo en el que haya vehículos.
+		// y reporta un límite de velocidad inferior al existente en la vía.
+		sp1.setSpeedLimit(40);
+
+		// 5.5 - Haz que un vehículo reporte un accidente en un tramo.
+		sc1.notifyIncident("TRAFFIC_ACCIDENT");
     }
 }
