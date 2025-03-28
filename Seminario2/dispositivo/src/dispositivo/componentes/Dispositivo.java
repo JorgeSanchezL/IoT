@@ -122,4 +122,9 @@ public class Dispositivo implements IDispositivo {
 	public void deshabilitar() {
 		this.habilitado = false;
 	}
+
+	// 5.10 - Llama al metodo que publica el estado de la funcion en el topic correspondiente
+	public void copiarF1() {
+		this.apiDispositivosMQTT.copiarF1();
+	}
 }

@@ -35,6 +35,9 @@ public class DispositivoIniciador {
 
 		// Arrancamos el dispositivo
 		d.iniciar();
-}
+
+		// 5.10 - El metodo copiarF1 copia el estado de la funcion f1 en el resto de dispositivos
+		// d.copiarF1(); comentado para eliminar ruido
+	}
 
 }

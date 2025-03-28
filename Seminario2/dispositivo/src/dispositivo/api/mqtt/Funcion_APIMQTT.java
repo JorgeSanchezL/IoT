@@ -69,7 +69,7 @@ public class Funcion_APIMQTT implements MqttCallback {
 		//
 		// Obtenemos el id de la función
 		//   Los topics están organizados de la siguiente manera:
-		//         $topic_base/dispositivo/funcion/$ID-FUNCION/subtopic
+		//         $topic_base/dispositivo/funcion/$ID-FUNCION/comandos
 		//   Donde el $topic_base es parametrizable al arrancar el dispositivo
 		//   y la $ID-FUNCION es el identificador de la dunción
 		
@@ -82,21 +82,7 @@ public class Funcion_APIMQTT implements MqttCallback {
 			return;
 		}
 		
-		// 5.10 - En caso de recibir un mensaje en el topic de copiar estados, obtenemos el estado y lo copiamos.
-		if topicNiveles[topicNiveles.length-1].equalsIgnoreCase("copiar") {
-			JSONObject json = null;
-			try {
-				json = new JSONObject(payload);
-			} catch (Exception e) {
-				MySimpleLogger.warn(this.loggerId, "Error al parsear JSON: " + e.getMessage());
-				return;
-			}
-			f.setStatus(json.getString("estado"));
-			this.publishStatus(f.getId(), json);
-			return;
-		}
-		
-		// 5.8 - En caso de que el mensaje no sea para copiar estados, parseamos el JSON para obtener la acción a realizar
+		// 5.8 - Parseamos el json para obtener la accion a realizar
 		String action = "";
 		try {
 			JSONObject json = null;
@@ -212,7 +198,6 @@ public class Funcion_APIMQTT implements MqttCallback {
 		
 		for(IFuncion f : this.dispositivo.getFunciones())
 			this.subscribe(this.calculateCommandTopic(f));
-			this.subscribe(this.calculateCopiarTopic(f));
 
 	}
 	
@@ -249,10 +234,6 @@ public class Funcion_APIMQTT implements MqttCallback {
 	
 	protected String calculateCommandTopic(IFuncion f) {
 		return Configuracion.TOPIC_BASE + "dispositivo/" + dispositivo.getId() + "/funcion/" + f.getId() + "/comandos";
-	}
-
-	protected String calculateCopiarTopic(IFuncion f) {
-		return Configuracion.TOPIC_BASE + "dispositivo/" + dispositivo.getId() + "/funcion/" + f.getId() + "/copiar";
 	}
 	
 	protected String calculateInfoTopic(IFuncion f) {

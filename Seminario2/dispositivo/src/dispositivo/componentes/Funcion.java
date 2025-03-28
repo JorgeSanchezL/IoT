@@ -100,6 +100,7 @@ public class Funcion implements IFuncion {
 	
 	@Override
 	public IFuncion iniciar() {
+		this.funcionMQTT.iniciar();
 		this._putIntoInitialStatus();
 		return this;
 	}

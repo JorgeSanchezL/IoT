@@ -42,10 +42,6 @@ public class Dispositivo_RESTApplication extends Application {
         router.attach(Dispositivo_Recurso.RUTA, Dispositivo_Recurso.class);
         MySimpleLogger.trace(this.loggerId, "Registrada ruta " + Dispositivo_Recurso.RUTA + " en api REST");
 
-        // 5.10 - Ruta para indicar a un dispositivo que una funcion se debe copiar al resto de dispositivos
-        router.attach(Funcion_Copiar_Recurso.RUTA, Funcion_Copiar_Recurso.class);
-        MySimpleLogger.trace(this.loggerId, "Registrada ruta " + Funcion_Copiar_Recurso.RUTA + " en api REST");
-
         return router;
     }
 	

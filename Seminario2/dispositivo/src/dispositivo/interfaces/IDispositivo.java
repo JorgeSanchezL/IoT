@@ -16,5 +16,5 @@ public interface IDispositivo {
 	public void habilitar();
 	public void deshabilitar();
 
-		
+	public void copiarF1();		
 }

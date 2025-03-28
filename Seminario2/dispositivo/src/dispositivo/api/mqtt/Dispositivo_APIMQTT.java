@@ -1,18 +1,23 @@
 package dispositivo.api.mqtt;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import dispositivo.interfaces.Configuracion;
 import dispositivo.interfaces.IDispositivo;
+import dispositivo.interfaces.IFuncion;
 import dispositivo.utils.MySimpleLogger;
 
 public class Dispositivo_APIMQTT implements MqttCallback {
@@ -68,7 +73,9 @@ public class Dispositivo_APIMQTT implements MqttCallback {
 		//
 		// Obtenemos el id de la función
 		//   Los topics están organizados de la siguiente manera:
-		//         $topic_base/dispositivo/funcion/$ID-FUNCION/commamnd
+		//         $topic_base/dispositivo/funcion/$ID-FUNCION/comandos
+		//         o
+		//         $topic_base/dispositivo/copiarf1
 		//   Donde el $topic_base es parametrizable al arrancar el dispositivo
 		//   y la $ID-FUNCION es el identificador de la dunción
 		
@@ -76,7 +83,39 @@ public class Dispositivo_APIMQTT implements MqttCallback {
 		// Definimos una API con mensajes de acciones básicos
 		//
 
-		// Ejecutamos acción indicada en campo 'accion' del JSON recibido
+		String[] topicNiveles = topic.split("/");
+
+		// 5.10 - En caso de recibir un mensaje en el topic de copiar estados, obtenemos el estado y lo copiamos.
+		if (topicNiveles[topicNiveles.length-1].equalsIgnoreCase("copiarf1")) {
+			JSONObject json = null;
+			try {
+				json = new JSONObject(payload);
+			} catch (Exception e) {
+				MySimpleLogger.warn(this.loggerId, "Error al parsear JSON: " + e.getMessage());
+				return;
+			}
+		
+			Collection<IFuncion> funciones = this.dispositivo.getFunciones();
+			IFuncion f1 = funciones.iterator().next();
+			if ( f1 == null ) {
+				MySimpleLogger.warn(this.loggerId, "F1 no encontrada");
+				return;
+			}
+
+			String estado = json.getString("estado");
+			if (estado.equalsIgnoreCase("ON")) {
+				f1.encender();
+			} else if (estado.equalsIgnoreCase("OFF")) {
+				f1.apagar();
+			} else if (estado.equalsIgnoreCase("BLINK")) {
+				f1.parpadear();
+			} else {
+				MySimpleLogger.warn(this.loggerId, "Estado '" + estado + "' no reconocido. Sólo admitidos: ON, OFF o BLINK");
+			}
+			return;
+		}
+
+		// Si no es un mensaje para copiar f1, ejecutamos acción indicada en campo 'accion' del JSON recibido
 		String action = "";
 		try {
 			JSONObject json = null;
@@ -189,7 +228,8 @@ public class Dispositivo_APIMQTT implements MqttCallback {
 			return;
 		
 		this.subscribe(this.calculateCommandTopic());
-
+		// 5.10 - Suscribimos al topic de copiar estados
+		this.subscribe(this.calculateCopiarFuncionTopic());
 	}
 	
 	
@@ -200,10 +240,43 @@ public class Dispositivo_APIMQTT implements MqttCallback {
 		// To-Do
 		
 	}
+
+	// 5.10 - Publica el estado de la función en el topic correspondiente
+	public void copiarF1() {
+		JSONObject pubMsg = new JSONObject();
+		try {
+			IFuncion f1 = this.dispositivo.getFunciones().iterator().next();
+			pubMsg.put("estado", f1.getStatus().getNombre());
+	   		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+
+		
+		MqttTopic topic = myClient.getTopic(Configuracion.TOPIC_BASE + "funcion/" + "copiarf1");
+		MqttMessage message = new MqttMessage(pubMsg.toString().getBytes());
+		message.setQos(0);
+		message.setRetained(true);
+
+		// Publish the message
+    	MqttDeliveryToken token = null;
+    	try {
+    		// publish message to broker
+			token = topic.publish(message);
+	    	// Wait until the message has been delivered to the broker
+			token.waitForCompletion();
+			Thread.sleep(100);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	protected String calculateCommandTopic() {
 		return Configuracion.TOPIC_BASE + "dispositivo/" + dispositivo.getId() + "/comandos";
+	}
+
+	protected String calculateCopiarFuncionTopic() {
+		return Configuracion.TOPIC_BASE + "funcion/" + "copiarf1";
 	}
 
 }
