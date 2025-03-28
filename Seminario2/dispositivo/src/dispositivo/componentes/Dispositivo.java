@@ -108,16 +108,19 @@ public class Dispositivo implements IDispositivo {
 		return this;
 	}
 	
+	// 5.4 - Método para consultar si el dispositivo está habilitado o no
 	@Override
 	public Boolean getHabilitado() {
 		return this.habilitado;
 	}
 	
+	// 5.4 - Método para habilitar el dispositivo
 	@Override
 	public void habilitar() {
 		this.habilitado = true;
 	}
 
+	// 5.4 - Método para deshabilitar el dispositivo
 	@Override
 	public void deshabilitar() {
 		this.habilitado = false;

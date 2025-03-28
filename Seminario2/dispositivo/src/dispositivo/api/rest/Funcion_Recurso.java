@@ -25,6 +25,7 @@ public class Funcion_Recurso extends Recurso {
 	public static final String ID = "FUNCION-ID";
 	public static final String RUTA = Dispositivo_Recurso.RUTA + "/funcion/{" + Funcion_Recurso.ID + "}";
 
+	// 5.3 - Contenido de la respuesta
 	public static JSONObject serialize(IFuncion f) {
 		JSONObject jsonResult = new JSONObject();
 		try {
@@ -42,7 +43,7 @@ public class Funcion_Recurso extends Recurso {
 		return dispositivo.getFuncion(funcionId);
 	}
 
-	
+	// 5.3 - Lógica para responder a la petición GET
     @Get
     public Representation get() {
     	

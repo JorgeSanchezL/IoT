@@ -82,7 +82,7 @@ public class Funcion_APIMQTT implements MqttCallback {
 			return;
 		}
 		
-		// 5.8 - Parseamos el json para obtener la accion a realizar
+		// 5.8 - Codificar los mensajes en formato JSON
 		String action = "";
 		try {
 			JSONObject json = null;

@@ -30,6 +30,7 @@ public class DispositivoIniciador {
 		IFuncion f2 = Funcion.build("f2", FuncionStatus.OFF, (Dispositivo) d, mqttBroker);
 		d.addFuncion(f2);
 
+		// 5.1 Añadir una nueva función al dispositivo
 		IFuncion f3 = Funcion.build("f3", FuncionStatus.OFF, (Dispositivo) d, mqttBroker);
 		d.addFuncion(f3);
 

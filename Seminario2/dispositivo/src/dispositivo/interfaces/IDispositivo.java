@@ -13,6 +13,8 @@ public interface IDispositivo {
 	public Collection<IFuncion> getFunciones();
 
 	public Boolean getHabilitado();
+
+	// 5.4 - Métodos para habilitar y deshabilitar el dispositivo
 	public void habilitar();
 	public void deshabilitar();
 

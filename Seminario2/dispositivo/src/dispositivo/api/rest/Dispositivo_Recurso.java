@@ -22,6 +22,7 @@ public class Dispositivo_Recurso extends Recurso {
 	
 	public static final String RUTA = "/dispositivo";
 
+	// 5.2 - Contenido de la respuesta
 	public static JSONObject serialize(IDispositivo dispositivo) {
 		JSONObject jsonResult = new JSONObject();
 		
@@ -42,6 +43,7 @@ public class Dispositivo_Recurso extends Recurso {
 		return this.getDispositivo_RESTApplication().getDispositivo();
 	}
 
+	// 5.2 - Lógica para responder a la petición GET para consultar el estado del dispositivo
     @Get
     public Representation get() {
 
@@ -58,7 +60,7 @@ public class Dispositivo_Recurso extends Recurso {
     }
     
     
-    
+    // 5.5 - Lógica para responder a la petición PUT para habilitar/deshabilitar el dispositivo
 	@Put
 	public Representation put(Representation entity) {
 

@@ -115,6 +115,7 @@ public class Dispositivo_APIMQTT implements MqttCallback {
 			return;
 		}
 
+		// 5.7 - Extensión de la API para habilitar/deshabilitar el dispositivo
 		// Si no es un mensaje para copiar f1, ejecutamos acción indicada en campo 'accion' del JSON recibido
 		String action = "";
 		try {
