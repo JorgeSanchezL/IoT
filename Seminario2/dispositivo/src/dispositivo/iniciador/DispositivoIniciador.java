@@ -38,6 +38,7 @@ public class DispositivoIniciador {
 		d.iniciar();
 
 		// 5.10 - El metodo copiarF1 copia el estado de la funcion f1 en el resto de dispositivos
+		// 5.10 - Publicar el estado a copiar en el topic correspondiente desde otro proceso o desde un cliente MQTT obtiene el mismo resultado
 		// d.copiarF1(); comentado para eliminar ruido
 	}
 
