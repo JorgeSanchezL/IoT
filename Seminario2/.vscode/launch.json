@@ -14,17 +14,6 @@
                 "ttmi050.iot.upv.es",
                 8182,
                 "tcp://tambori.dsic.upv.es:10083"]
-        },
-        {
-            "type": "java",
-            "name": "DispositivoPi4Jv2",
-            "request": "launch",
-            "mainClass": "dispositivo.pi4j2.iniciador.DispositivoIniciadorPi4Jv2",
-            "args": [
-                "ttmi050",
-                "ttmi050.iot.upv.es",
-                8182,
-                "tcp://mqttserver:1883"]
         }
     ]
 }
